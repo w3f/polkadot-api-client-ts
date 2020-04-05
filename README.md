@@ -1,1 +1,1 @@
-# api-client
+# polkadot-api-client-ts
