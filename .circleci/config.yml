@@ -1,0 +1,45 @@
+version: 2
+
+jobs:
+  test:
+    docker:
+      - image: node:12.16.1-alpine3.11
+    steps:
+      - checkout
+
+      - run: yarn
+
+      - run:
+          name: Run tests
+          command: |
+            yarn test
+
+  publishPackage:
+    docker:
+      - image: node:12.16.1-alpine3.11
+    steps:
+      - checkout
+
+      - run:
+          name: Publish package
+          command: |
+            echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
+            yarn
+            yarn publish --access public
+
+workflows:
+  version: 2
+  test-deploy:
+    jobs:
+      - test:
+          filters:
+            tags:
+              only: /.*/
+      - publishPackage:
+          filters:
+            tags:
+              only: /v[0-9]+(\.[0-9]+)*/
+            branches:
+              ignore: /.*/
+          requires:
+            - test
