@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "declaration": true,
+    "module": "commonjs",
+    "noImplicitAny": false,
+    "outDir": "./dist",
+    "skipLibCheck": true,
+    "target": "es6"
+  },
+  "exclude": [
+    "node_modules",
+    "**/*.spec.ts",
+    "test/**/*",
+    "dist/**/*"
+  ],
+  "_comment": "The polkadot-api-client libray contains typescript errors"
+}
