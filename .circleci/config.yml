@@ -4,6 +4,9 @@ jobs:
   test:
     docker:
       - image: node:12.16.1-alpine3.11
+      - image: parity/polkadot:v0.7.28
+        name: polkadot
+        command: --dev --ws-port 11000 --unsafe-ws-external
     steps:
       - checkout
 
