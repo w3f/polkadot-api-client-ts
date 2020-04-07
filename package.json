@@ -15,7 +15,7 @@
     "build": "tsc --build tsconfig.json",
     "prepare": "yarn build",
     "pretest": "yarn lint",
-    "test": "mocha --timeout 10000 --require ts-node/register --exit test/**/*.ts",
+    "test": "mocha --timeout 30000 --require ts-node/register --exit test/**/*.ts",
     "start": "node ./dist/src/index.js start"
   },
   "dependencies": {
@@ -27,7 +27,7 @@
     "@polkadot/wasm-crypto": "1.2.1",
     "@w3f/logger": "^0.2.0",
     "async-wait-until": "^1.2.4",
-    "fs-extra": "^8.1.0",
+    "fs-extra": "^9.0.0",
     "ws": "6.1.2"
   },
   "devDependencies": {
