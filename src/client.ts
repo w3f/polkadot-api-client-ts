@@ -15,10 +15,14 @@ import { ZeroBalance } from './constants';
 export class Client {
     private api: ApiPromise;
     private currentTxDone: boolean;
-    private logger: Logger;
+    private _logger: Logger;
 
-    constructor(private readonly wsEndpoint: string) {
-        this.logger = createLogger();
+    constructor(private readonly wsEndpoint: string, private logger?: Logger) {
+        if (!logger) {
+            this._logger = createLogger();
+        } else {
+            this._logger = logger;
+        }
     }
 
     public async balanceOf(addr: string): Promise<Balance> {
@@ -68,7 +72,7 @@ export class Client {
             era,
             nonce: account.nonce
         };
-        this.logger.info(`sending ${amount} from ${senderKeyPair.address} to ${recipentAddress}`);
+        this._logger.info(`sending ${amount} from ${senderKeyPair.address} to ${recipentAddress}`);
         this.currentTxDone = false;
         try {
             await transfer.signAndSend(
@@ -77,14 +81,14 @@ export class Client {
                 this.sendStatusCb.bind(this)
             );
         } catch (e) {
-            this.logger.info(`Exception during tx sign and send: ${e}`);
+            this._logger.info(`Exception during tx sign and send: ${e}`);
         }
-        this.logger.info(`after sending ${amount} from ${senderKeyPair.address} to ${recipentAddress}, waiting for transaction done`);
+        this._logger.info(`after sending ${amount} from ${senderKeyPair.address} to ${recipentAddress}, waiting for transaction done`);
 
         try {
             await waitUntil(() => this.currentTxDone, 48000, 500);
         } catch (error) {
-            this.logger.info(`tx failed: ${error}`);
+            this._logger.info(`tx failed: ${error}`);
         }
     }
 
@@ -99,7 +103,7 @@ export class Client {
         ]);
 
         await waitReady();
-        this.logger.info(`You are connected to chain ${chain} using ${nodeName} v${nodeVersion}`);
+        this._logger.info(`You are connected to chain ${chain} using ${nodeName} v${nodeVersion}`);
     }
 
     public disconnect(): void {
@@ -115,23 +119,23 @@ export class Client {
     private async sendStatusCb({ events = [], status }): Promise<void> {
         switch (status.type) {
             case 'Invalid':
-                this.logger.info(`Transaction invalid`);
+                this._logger.info(`Transaction invalid`);
                 this.currentTxDone = true;
                 break;
             case 'Ready':
-                this.logger.info(`Transaction is ready`);
+                this._logger.info(`Transaction is ready`);
                 break;
             case 'Broadcast':
-                this.logger.info(`Transaction has been broadcasted`);
+                this._logger.info(`Transaction has been broadcasted`);
                 break;
             case 'Finalized':
-                this.logger.info(`Transaction has been included in blockHash ${status.asFinalized}`);
+                this._logger.info(`Transaction has been included in blockHash ${status.asFinalized}`);
                 events.forEach(
                     async ({ event: { method } }) => {
                         if (method === 'ExtrinsicSuccess') {
-                            this.logger.info(`Transaction succeeded`);
+                            this._logger.info(`Transaction succeeded`);
                         } else if (method === 'ExtrinsicFailed') {
-                            this.logger.info(`Transaction failed`);
+                            this._logger.info(`Transaction failed`);
                         }
                     }
                 );
