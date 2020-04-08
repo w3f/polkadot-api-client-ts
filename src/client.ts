@@ -8,11 +8,11 @@ import { Logger, createLogger } from '@w3f/logger';
 import fs from 'fs-extra';
 import waitUntil from 'async-wait-until';
 
-import { Keystore } from './types';
+import { Keystore, ApiClient } from './types';
 import { ZeroBalance } from './constants';
 
 
-export class Client {
+export class Client implements ApiClient {
     private api: ApiPromise;
     private currentTxDone: boolean;
     private _logger: Logger;
