@@ -57,4 +57,12 @@ describe('Client', () => {
         const expected = (initialBobBalance as BN).add(toSend) as Balance;
         finalBobBalance.eq(expected).should.be.true;
     });
+
+    it('should return the api object', async () => {
+        const api = await subject.api();
+
+        const chain = await api.rpc.system.chain();
+
+        chain.should.eq('Development');
+    });
 });
