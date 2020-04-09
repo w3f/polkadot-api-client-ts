@@ -13,7 +13,7 @@ import { ZeroBalance } from './constants';
 
 
 export class Client implements ApiClient {
-    private api: ApiPromise;
+    private _api: ApiPromise;
     private currentTxDone: boolean;
     private _logger: Logger;
 
@@ -25,8 +25,15 @@ export class Client implements ApiClient {
         }
     }
 
+    public async api(): Promise<ApiPromise> {
+        if (this.apiNotReady()) {
+            await this.connect();
+        }
+        return this._api;
+    }
+
     public async balanceOf(addr: string): Promise<Balance> {
-        if (!this.api) {
+        if (this.apiNotReady()) {
             await this.connect();
         }
 
@@ -35,7 +42,7 @@ export class Client implements ApiClient {
     }
 
     public async balanceOfKeystore(keystore: Keystore): Promise<Balance> {
-        if (!this.api) {
+        if (this.apiNotReady()) {
             await this.connect();
         }
         const keyContents = this.keystoreContent(keystore.filePath);
@@ -48,14 +55,14 @@ export class Client implements ApiClient {
             return
         }
 
-        if (!this.api) {
+        if (this.apiNotReady()) {
             await this.connect();
         }
 
         const era = createType(
-            this.api.registry,
+            this._api.registry,
             'ExtrinsicEra',
-            new GenericImmortalEra(this.api.registry)
+            new GenericImmortalEra(this._api.registry)
         );
 
         const keyContents = this.keystoreContent(keystore.filePath);
@@ -66,9 +73,9 @@ export class Client implements ApiClient {
         senderKeyPair.decodePkcs8(passwordContents);
 
         const account = await this.getAccount(senderKeyPair.address);
-        const transfer = this.api.tx.balances.transfer(recipentAddress, amount);
+        const transfer = this._api.tx.balances.transfer(recipentAddress, amount);
         const transferOptions = {
-            blockHash: this.api.genesisHash,
+            blockHash: this._api.genesisHash,
             era,
             nonce: account.nonce
         };
@@ -94,12 +101,12 @@ export class Client implements ApiClient {
 
     private async connect(): Promise<void> {
         const provider = new WsProvider(this.wsEndpoint);
-        this.api = await ApiPromise.create({ provider });
+        this._api = await ApiPromise.create({ provider });
 
         const [chain, nodeName, nodeVersion] = await Promise.all([
-            this.api.rpc.system.chain(),
-            this.api.rpc.system.name(),
-            this.api.rpc.system.version()
+            this._api.rpc.system.chain(),
+            this._api.rpc.system.name(),
+            this._api.rpc.system.version()
         ]);
 
         await waitReady();
@@ -107,13 +114,13 @@ export class Client implements ApiClient {
     }
 
     public disconnect(): void {
-        if (this.api) {
-            this.api.disconnect();
+        if (this._api) {
+            this._api.disconnect();
         }
     }
 
     private async getAccount(addr: string): Promise<any> {
-        return this.api.query.system.account(addr);
+        return this._api.query.system.account(addr);
     }
 
     private async sendStatusCb({ events = [], status }): Promise<void> {
@@ -144,5 +151,9 @@ export class Client implements ApiClient {
     }
     private keystoreContent(path: string): KeyringPair$Json {
         return JSON.parse(fs.readFileSync(path, { encoding: 'utf-8' })) as KeyringPair$Json;
+    }
+
+    private apiNotReady(): boolean {
+        return !this._api;
     }
 }

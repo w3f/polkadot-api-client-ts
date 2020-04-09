@@ -1,3 +1,4 @@
+import { ApiPromise } from '@polkadot/api';
 import { Balance } from '@polkadot/types/interfaces'
 
 export interface Keystore {
@@ -10,4 +11,5 @@ export interface ApiClient {
     balanceOfKeystore(keystore: Keystore): Promise<Balance>;
     send(keystore: Keystore, recipentAddress: string, amount: Balance): Promise<void>;
     disconnect(): void;
+    api(): Promise<ApiPromise>;
 }
