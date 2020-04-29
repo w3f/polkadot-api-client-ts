@@ -3,7 +3,7 @@ import BN from 'bn.js';
 import fs from 'fs-extra';
 import { Keyring } from '@polkadot/api';
 import { should } from 'chai';
-import { TestRPC } from '@w3f/test-utils';
+import { TestPolkadotRPC } from '@w3f/test-utils';
 import tmp from 'tmp';
 
 import { Client } from '../src/client';
@@ -12,7 +12,7 @@ import { ZeroBalance } from '../src/constants';
 
 should();
 
-const testRPC = new TestRPC();
+const testRPC = new TestPolkadotRPC();
 const subject = new Client(testRPC.endpoint());
 let keyring: Keyring;
 
