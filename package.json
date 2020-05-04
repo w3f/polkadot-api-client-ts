@@ -1,6 +1,6 @@
 {
   "name": "@w3f/polkadot-api-client",
-  "version": "0.4.1",
+  "version": "0.5.0",
   "description": "Polkaddot API client",
   "repository": "git@github.com:w3f/polkadot-api-client-ts.git",
   "author": "W3F Infrastructure Team <devops@web3.foundation>",
@@ -19,11 +19,11 @@
     "start": "node ./dist/src/index.js start"
   },
   "dependencies": {
-    "@polkadot/api": "1.11.2",
-    "@polkadot/keyring": "2.8.1",
-    "@polkadot/types": "1.11.2",
-    "@polkadot/util": "2.8.1",
-    "@polkadot/util-crypto": "2.8.1",
+    "@polkadot/api": "1.12.2",
+    "@polkadot/keyring": "2.9.1",
+    "@polkadot/types": "1.12.2",
+    "@polkadot/util": "2.9.1",
+    "@polkadot/util-crypto": "2.9.1",
     "@polkadot/wasm-crypto": "1.2.1",
     "@w3f/logger": "^0.3.0",
     "async-wait-until": "^1.2.4",
@@ -38,7 +38,7 @@
     "@types/tmp": "^0.1.0",
     "@typescript-eslint/eslint-plugin": "^2.25.0",
     "@typescript-eslint/parser": "^2.25.0",
-    "@w3f/test-utils": "^0.6.0",
+    "@w3f/test-utils": "^0.7.0",
     "chai": "^4.2.0",
     "eslint": "^6.6.0",
     "mocha": "^7.0.0",
