@@ -12,4 +12,5 @@ export interface ApiClient {
     send(keystore: Keystore, recipentAddress: string, amount: Balance): Promise<void>;
     disconnect(): void;
     api(): Promise<ApiPromise>;
+    claim(keystore: Keystore): Promise<void>;
 }

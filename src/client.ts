@@ -1,5 +1,5 @@
 import { ApiPromise, WsProvider } from '@polkadot/api';
-import { Keyring } from '@polkadot/keyring';
+import { Keyring, encodeAddress } from '@polkadot/keyring';
 import { KeyringPair$Json, KeyringPair } from '@polkadot/keyring/types';
 import { Balance } from '@polkadot/types/interfaces'
 import { createType, GenericImmortalEra } from '@polkadot/types';
@@ -91,6 +91,33 @@ export class Client implements ApiClient {
             await waitUntil(() => this.currentTxDone, 48000, 500);
         } catch (error) {
             this._logger.info(`tx failed: ${error}`);
+        }
+    }
+
+    public async claim(keystore: Keystore): Promise<void> {
+        const keyPair = this.getKeyPair(keystore);
+
+        const address = encodeAddress(keyPair.address, 2);
+
+        const currentEra = await (await this._api.query.staking.activeEra()).unwrapOr(null);
+        const ledger = await (await this._api.query.staking.ledger(address)).unwrapOr(null);
+        const lastReward = ledger.toJSON().lastReward;
+        const numOfUnclaimPayouts = currentEra.toJson().index - lastReward - 1;
+
+        if (numOfUnclaimPayouts > 0) {
+            const payoutCalls = [];
+            for (let i = 1; i <= numOfUnclaimPayouts; i++) {
+                const idx = lastReward + i;
+                payoutCalls.push(this._api.tx.staking.payoutStakers(address, idx));
+            }
+
+            const txHash = await this._api.tx.utility
+                .batch(payoutCalls)
+                .signAndSend(keyPair);
+            this._logger.info(`Claim for ${keyPair.address} submitted with hash ${txHash.toHex()}`)
+
+        } else {
+            this._logger.info(`All payouts have been claimed for ${address}.`)
         }
     }
 
