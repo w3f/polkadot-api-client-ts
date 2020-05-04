@@ -13,7 +13,7 @@ import { ZeroBalance } from '../src/constants';
 should();
 
 const testRPC = new TestPolkadotRPC();
-const subject = new Client(testRPC.endpoint());
+let subject: Client;
 let keyring: Keyring;
 
 
@@ -27,6 +27,10 @@ describe('Client', () => {
         await testRPC.stop();
     });
 
+    beforeEach(() => {
+        subject = new Client(testRPC.endpoint());
+    })
+
     it('should get a balance', async () => {
         const alice = keyring.addFromUri('//Alice');
 
@@ -39,23 +43,36 @@ describe('Client', () => {
         const alice = keyring.addFromUri('//Alice');
         const bob = keyring.addFromUri('//Bob');
 
-        const initialBobBalance = await subject.balanceOf(bob.address);
-
         const pass = 'pass';
         const aliceKeypairJson = keyring.toJson(alice.address, pass);
         const ksFile = tmp.fileSync();
         fs.writeSync(ksFile.fd, JSON.stringify(aliceKeypairJson));
         const passFile = tmp.fileSync();
         fs.writeSync(passFile.fd, pass);
+        const ks: Keystore = { filePath: ksFile.name, passwordPath: passFile.name };
+
+        const initialBobBalance = await subject.balanceOf(bob.address);
 
         const toSend = new BN(10000000000000);
-        const ks: Keystore = { filePath: ksFile.name, passwordPath: passFile.name };
         await subject.send(ks, bob.address, toSend as Balance);
 
         const finalBobBalance = await subject.balanceOf(bob.address);
 
         const expected = (initialBobBalance as BN).add(toSend) as Balance;
         finalBobBalance.eq(expected).should.be.true;
+    });
+
+    it('should try to retrieve claims', async () => {
+        const alice = keyring.addFromUri('//Alice');
+        const pass = 'pass';
+        const aliceKeypairJson = keyring.toJson(alice.address, pass);
+        const ksFile = tmp.fileSync();
+        fs.writeSync(ksFile.fd, JSON.stringify(aliceKeypairJson));
+        const passFile = tmp.fileSync();
+        fs.writeSync(passFile.fd, pass);
+        const ks: Keystore = { filePath: ksFile.name, passwordPath: passFile.name };
+
+        await subject.claim(ks);
     });
 
     it('should return the api object', async () => {
@@ -65,4 +82,5 @@ describe('Client', () => {
 
         chain.should.eq('Development');
     });
+
 });

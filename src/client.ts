@@ -95,6 +95,10 @@ export class Client implements ApiClient {
     }
 
     public async claim(keystore: Keystore): Promise<void> {
+        if (this.apiNotReady()) {
+            await this.connect();
+        }
+
         const keyPair = this.getKeyPair(keystore);
 
         const address = encodeAddress(keyPair.address, 2);
@@ -102,7 +106,7 @@ export class Client implements ApiClient {
         const currentEra = await (await this._api.query.staking.activeEra()).unwrapOr(null);
         const ledger = await (await this._api.query.staking.ledger(address)).unwrapOr(null);
         const lastReward = ledger.toJSON().lastReward;
-        const numOfUnclaimPayouts = currentEra.toJson().index - lastReward - 1;
+        const numOfUnclaimPayouts = currentEra.index - lastReward - 1;
 
         if (numOfUnclaimPayouts > 0) {
             const payoutCalls = [];
