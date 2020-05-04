@@ -1,6 +1,6 @@
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { Keyring } from '@polkadot/keyring';
-import { KeyringPair$Json } from '@polkadot/keyring/types';
+import { KeyringPair$Json, KeyringPair } from '@polkadot/keyring/types';
 import { Balance } from '@polkadot/types/interfaces'
 import { createType, GenericImmortalEra } from '@polkadot/types';
 import { waitReady } from '@polkadot/wasm-crypto';
@@ -65,12 +65,7 @@ export class Client implements ApiClient {
             new GenericImmortalEra(this._api.registry)
         );
 
-        const keyContents = this.keystoreContent(keystore.filePath);
-        const keyType = keyContents.encoding.content[1];
-        const keyring = new Keyring({ type: keyType });
-        const senderKeyPair = keyring.addFromJson(keyContents);
-        const passwordContents = fs.readFileSync(keystore.passwordPath, { encoding: 'utf-8' });
-        senderKeyPair.decodePkcs8(passwordContents);
+        const senderKeyPair = this.getKeyPair(keystore);
 
         const account = await this.getAccount(senderKeyPair.address);
         const transfer = this._api.tx.balances.transfer(recipentAddress, amount);
@@ -155,5 +150,16 @@ export class Client implements ApiClient {
 
     private apiNotReady(): boolean {
         return !this._api;
+    }
+
+    private getKeyPair(keystore: Keystore): KeyringPair {
+        const keyContents = this.keystoreContent(keystore.filePath);
+        const keyType = keyContents.encoding.content[1];
+        const keyring = new Keyring({ type: keyType });
+        const senderKeyPair = keyring.addFromJson(keyContents);
+        const passwordContents = fs.readFileSync(keystore.passwordPath, { encoding: 'utf-8' });
+        senderKeyPair.decodePkcs8(passwordContents);
+
+        return senderKeyPair;
     }
 }
