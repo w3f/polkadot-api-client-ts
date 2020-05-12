@@ -1,6 +1,6 @@
 {
   "name": "@w3f/polkadot-api-client",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "Polkaddot API client",
   "repository": "git@github.com:w3f/polkadot-api-client-ts.git",
   "author": "W3F Infrastructure Team <devops@web3.foundation>",
@@ -19,9 +19,9 @@
     "start": "node ./dist/src/index.js start"
   },
   "dependencies": {
-    "@polkadot/api": "1.12.2",
+    "@polkadot/api": "1.13.1",
     "@polkadot/keyring": "2.9.1",
-    "@polkadot/types": "1.12.2",
+    "@polkadot/types": "1.13.1",
     "@polkadot/util": "2.9.1",
     "@polkadot/util-crypto": "2.9.1",
     "@polkadot/wasm-crypto": "1.2.1",
