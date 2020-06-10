@@ -3,7 +3,6 @@ import { Keyring } from '@polkadot/keyring';
 import { KeyringPair$Json, KeyringPair } from '@polkadot/keyring/types';
 import { Balance, StakingLedger } from '@polkadot/types/interfaces'
 import { createType, GenericImmortalEra } from '@polkadot/types';
-import { waitReady } from '@polkadot/wasm-crypto';
 import { Logger, createLogger } from '@w3f/logger';
 import fs from 'fs-extra';
 import waitUntil from 'async-wait-until';
@@ -15,13 +14,13 @@ import { ZeroBalance, ZeroBN } from './constants';
 export class Client implements ApiClient {
     private _api: ApiPromise;
     private currentTxDone: boolean;
-    private _logger: Logger;
+    private logger: Logger;
 
-    constructor(private readonly wsEndpoint: string, private logger?: Logger) {
+    constructor(private readonly wsEndpoint: string, logger?: Logger) {
         if (!logger) {
-            this._logger = createLogger();
+            this.logger = createLogger();
         } else {
-            this._logger = logger;
+            this.logger = logger;
         }
     }
 
@@ -74,7 +73,7 @@ export class Client implements ApiClient {
             era,
             nonce: account.nonce
         };
-        this._logger.info(`sending ${amount} from ${senderKeyPair.address} to ${recipentAddress}`);
+        this.logger.info(`sending ${amount} from ${senderKeyPair.address} to ${recipentAddress}`);
         this.currentTxDone = false;
         try {
             await transfer.signAndSend(
@@ -83,14 +82,14 @@ export class Client implements ApiClient {
                 this.sendStatusCb.bind(this)
             );
         } catch (e) {
-            this._logger.info(`Exception during tx sign and send: ${e}`);
+            this.logger.info(`Exception during tx sign and send: ${e}`);
         }
-        this._logger.info(`after sending ${amount} from ${senderKeyPair.address} to ${recipentAddress}, waiting for transaction done`);
+        this.logger.info(`after sending ${amount} from ${senderKeyPair.address} to ${recipentAddress}, waiting for transaction done`);
 
         try {
-            await waitUntil(() => this.currentTxDone, 48000, 500);
+            await waitUntil(() => this.currentTxDone, 120000, 500);
         } catch (error) {
-            this._logger.info(`tx failed: ${error}`);
+            this.logger.info(`tx failed: ${error}`);
         }
     }
 
@@ -125,9 +124,9 @@ export class Client implements ApiClient {
             for (let i = 1; i <= numOfUnclaimPayouts; i++) {
                 const idx = lastReward + i;
                 const exposure = await this._api.query.staking.erasStakers(idx, keyPair.address);
-                this._logger.info(`exposure: ${exposure}`);
+                this.logger.info(`exposure: ${exposure}`);
                 if (exposure.total.toBn().gt(ZeroBN)) {
-                    this._logger.info(`Adding claim for ${keyPair.address}, era ${idx}`);
+                    this.logger.info(`Adding claim for ${keyPair.address}, era ${idx}`);
                     payoutCalls.push(this._api.tx.staking.payoutStakers(keyPair.address, idx));
                 }
             }
@@ -137,15 +136,15 @@ export class Client implements ApiClient {
                     .batch(payoutCalls)
                     .signAndSend(keyPair, this.sendStatusCb.bind(this));
             } catch (e) {
-                this._logger.error(`Could not request claim for ${keyPair.address}: ${e}`);
+                this.logger.error(`Could not request claim for ${keyPair.address}: ${e}`);
             }
             try {
                 await waitUntil(() => this.currentTxDone, 48000, 500);
             } catch (error) {
-                this._logger.info(`tx failed: ${error}`);
+                this.logger.info(`tx failed: ${error}`);
             }
         } else {
-            this._logger.info(`All payouts have been claimed for ${keyPair.address}.`)
+            this.logger.info(`All payouts have been claimed for ${keyPair.address}.`)
         }
     }
 
@@ -159,8 +158,7 @@ export class Client implements ApiClient {
             this._api.rpc.system.version()
         ]);
 
-        await waitReady();
-        this._logger.info(`You are connected to chain ${chain} using ${nodeName} v${nodeVersion}`);
+        this.logger.info(`You are connected to chain ${chain} using ${nodeName} v${nodeVersion}`);
     }
 
     public disconnect(): void {
@@ -174,29 +172,27 @@ export class Client implements ApiClient {
     }
 
     private async sendStatusCb({ events = [], status }): Promise<void> {
-        switch (status.type) {
-            case 'Invalid':
-                this._logger.info(`Transaction invalid`);
-                this.currentTxDone = true;
-                break;
-            case 'Ready':
-                this._logger.info(`Transaction is ready`);
-                break;
-            case 'Broadcast':
-                this._logger.info(`Transaction has been broadcasted`);
-                break;
-            case 'Finalized':
-                this._logger.info(`Transaction has been included in blockHash ${status.asFinalized}`);
-                events.forEach(
-                    async ({ event: { method } }) => {
-                        if (method === 'ExtrinsicSuccess') {
-                            this._logger.info(`Transaction succeeded`);
-                        } else if (method === 'ExtrinsicFailed') {
-                            this._logger.info(`Transaction failed`);
-                        }
+        if (status.isInvalid) {
+            this.logger.info(`Transaction invalid`);
+            this.currentTxDone = true;
+        } else if (status.isReady) {
+            this.logger.info(`Transaction is ready`);
+        } else if (status.isBroadcast) {
+            this.logger.info(`Transaction has been broadcasted`);
+        } else if (status.isInBlock) {
+            this.logger.info(`Transaction is in block`);
+        } else if (status.isFinalized) {
+            this.logger.info(`Transaction has been included in blockHash ${status.asFinalized}`);
+            events.forEach(
+                async ({ event: { method } }) => {
+                    if (method === 'ExtrinsicSuccess') {
+                        this.logger.info(`Transaction succeeded`);
+                    } else if (method === 'ExtrinsicFailed') {
+                        this.logger.info(`Transaction failed`);
                     }
-                );
-                this.currentTxDone = true;
+                }
+            );
+            this.currentTxDone = true;
         }
     }
     private keystoreContent(path: string): KeyringPair$Json {
