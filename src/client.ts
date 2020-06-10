@@ -87,7 +87,7 @@ export class Client implements ApiClient {
         this._logger.info(`after sending ${amount} from ${senderKeyPair.address} to ${recipentAddress}, waiting for transaction done`);
 
         try {
-            await waitUntil(() => this.currentTxDone, 48000, 500);
+            await waitUntil(() => this.currentTxDone, 120000, 500);
         } catch (error) {
             this._logger.info(`tx failed: ${error}`);
         }
