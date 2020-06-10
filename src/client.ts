@@ -3,7 +3,6 @@ import { Keyring } from '@polkadot/keyring';
 import { KeyringPair$Json, KeyringPair } from '@polkadot/keyring/types';
 import { Balance, StakingLedger } from '@polkadot/types/interfaces'
 import { createType, GenericImmortalEra } from '@polkadot/types';
-import { waitReady } from '@polkadot/wasm-crypto';
 import { Logger, createLogger } from '@w3f/logger';
 import fs from 'fs-extra';
 import waitUntil from 'async-wait-until';
@@ -159,7 +158,6 @@ export class Client implements ApiClient {
             this._api.rpc.system.version()
         ]);
 
-        await waitReady();
         this._logger.info(`You are connected to chain ${chain} using ${nodeName} v${nodeVersion}`);
     }
 
