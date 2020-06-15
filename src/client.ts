@@ -98,6 +98,7 @@ export class Client implements ApiClient {
             await this.connect();
         }
 
+        const maxBatchedTransactions = 16;
         const keyPair = this.getKeyPair(validatorKeystore);
 
         const currentEra = (await this._api.query.staking.activeEra()).unwrapOr(null);
@@ -117,11 +118,16 @@ export class Client implements ApiClient {
             lastReward = ledger.claimedRewards.pop().toNumber();
         }
 
-        const numOfUnclaimPayouts = currentEra.index - lastReward - 1;
+        let numOfUnclaimPayouts = currentEra.index - lastReward - 1;
 
-        if (numOfUnclaimPayouts > 0) {
+        while (numOfUnclaimPayouts > 0) {
             const payoutCalls = [];
-            for (let i = 1; i <= numOfUnclaimPayouts; i++) {
+            let txLimit = numOfUnclaimPayouts;
+            if (numOfUnclaimPayouts > maxBatchedTransactions) {
+                txLimit = maxBatchedTransactions;
+            }
+
+            for (let i = 1; i <= txLimit; i++) {
                 const idx = lastReward + i;
                 const exposure = await this._api.query.staking.erasStakers(idx, keyPair.address);
                 this.logger.info(`exposure: ${exposure}`);
@@ -143,9 +149,9 @@ export class Client implements ApiClient {
             } catch (error) {
                 this.logger.info(`tx failed: ${error}`);
             }
-        } else {
-            this.logger.info(`All payouts have been claimed for ${keyPair.address}.`)
+            numOfUnclaimPayouts -= txLimit;
         }
+        this.logger.info(`All payouts have been claimed for ${keyPair.address}.`);
     }
 
     private async connect(): Promise<void> {
