@@ -119,7 +119,7 @@ export class Client implements ApiClient {
         }
 
         let numOfUnclaimPayouts = currentEra.index - lastReward - 1;
-
+        let start = 1;
         while (numOfUnclaimPayouts > 0) {
             const payoutCalls = [];
             let txLimit = numOfUnclaimPayouts;
@@ -127,7 +127,7 @@ export class Client implements ApiClient {
                 txLimit = maxBatchedTransactions;
             }
 
-            for (let i = 1; i <= txLimit; i++) {
+            for (let i = start; i <= txLimit + start - 1; i++) {
                 const idx = lastReward + i;
                 const exposure = await this._api.query.staking.erasStakers(idx, keyPair.address);
                 this.logger.info(`exposure: ${exposure}`);
@@ -150,6 +150,7 @@ export class Client implements ApiClient {
                 this.logger.info(`tx failed: ${error}`);
             }
             numOfUnclaimPayouts -= txLimit;
+            start += txLimit;
         }
         this.logger.info(`All payouts have been claimed for ${keyPair.address}.`);
     }
