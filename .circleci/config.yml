@@ -15,6 +15,7 @@ jobs:
           command: |
             yarn test
 
+
   publishPackage:
     docker:
       - image: node:12.16.1-alpine3.11
