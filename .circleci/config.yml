@@ -4,7 +4,7 @@ jobs:
   test:
     docker:
       - image: web3f/node:v0.1.0
-      - image: parity/polkadot:v0.8.12 
+      - image: parity/polkadot:v0.8.14
         name: polkadot
         command: --chain=kusama-dev --ws-port 11000 --alice --ws-external --rpc-methods=Unsafe --rpc-cors=all
     steps:
@@ -15,9 +15,10 @@ jobs:
           command: |
             yarn test
 
+
   publishPackage:
     docker:
-      - image: node:12.16.1-alpine3.11
+      - image: web3f/node:v0.1.0
     steps:
       - checkout
       - run:
