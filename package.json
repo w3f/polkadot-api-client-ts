@@ -1,6 +1,6 @@
 {
   "name": "@w3f/polkadot-api-client",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "description": "Polkaddot API client",
   "repository": "git@github.com:w3f/polkadot-api-client-ts.git",
   "author": "W3F Infrastructure Team <devops@web3.foundation>",

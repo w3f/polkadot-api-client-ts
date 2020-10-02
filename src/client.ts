@@ -98,7 +98,7 @@ export class Client implements ApiClient {
             await this.connect();
         }
 
-        const maxBatchedTransactions = 16;
+        const maxBatchedTransactions = 9;
         const keyPair = this.getKeyPair(validatorKeystore);
 
         const currentEra = (await this._api.query.staking.activeEra()).unwrapOr(null);
