@@ -65,16 +65,7 @@
     eventemitter3 "^4.0.7"
     rxjs "^6.6.3"
 
-"@polkadot/keyring@3.4.1":
-  version "3.4.1"
-  resolved "https://registry.yarnpkg.com/@polkadot/keyring/-/keyring-3.4.1.tgz#9898966373b0f1e49a53cf7a21660be6b964e130"
-  integrity sha512-x8FxzDzyFX5ai+tnPaxAFUBV/2Mw/om8sRoMh+fT6Jzh3nC7pXfecH5ticJPKe73v/y42hn9xM0tiAI5P8Ohcw==
-  dependencies:
-    "@babel/runtime" "^7.11.2"
-    "@polkadot/util" "3.4.1"
-    "@polkadot/util-crypto" "3.4.1"
-
-"@polkadot/keyring@^3.5.1":
+"@polkadot/keyring@3.5.1", "@polkadot/keyring@^3.5.1":
   version "3.5.1"
   resolved "https://registry.yarnpkg.com/@polkadot/keyring/-/keyring-3.5.1.tgz#6a884be3812640efc26e6a7bc0a72eb590023790"
   integrity sha512-Wg8PBACl+RobbmcShl659/5a+foU1j7PGdvdr2pZowkZul8jvwyAN+piIyPSfrsaJkbUoDUR9Pe+oVoeF4ZoXg==
@@ -147,25 +138,6 @@
     memoizee "^0.4.14"
     rxjs "^6.6.3"
 
-"@polkadot/util-crypto@3.4.1":
-  version "3.4.1"
-  resolved "https://registry.yarnpkg.com/@polkadot/util-crypto/-/util-crypto-3.4.1.tgz#f8a18f36221cdae772ab6f499779302f3397eb35"
-  integrity sha512-RdTAiJ6dFE8nQJ7/wQkvYa6aNZG3Lusf/r7UmPJ56dZldvDTP3OdekzcfYdogU8hSJrE/xX84ii4DrHLnXXfAQ==
-  dependencies:
-    "@babel/runtime" "^7.11.2"
-    "@polkadot/util" "3.4.1"
-    "@polkadot/wasm-crypto" "^1.4.1"
-    base-x "^3.0.8"
-    bip39 "^3.0.2"
-    blakejs "^1.1.0"
-    bn.js "^5.1.3"
-    elliptic "^6.5.3"
-    js-sha3 "^0.8.0"
-    pbkdf2 "^3.1.1"
-    scryptsy "^2.1.0"
-    tweetnacl "^1.0.3"
-    xxhashjs "^0.2.2"
-
 "@polkadot/util-crypto@3.5.1", "@polkadot/util-crypto@^3.5.1":
   version "3.5.1"
   resolved "https://registry.yarnpkg.com/@polkadot/util-crypto/-/util-crypto-3.5.1.tgz#7f8d8b5982f9d2df2432ff017d89110e7212f330"
@@ -184,18 +156,6 @@
     scryptsy "^2.1.0"
     tweetnacl "^1.0.3"
     xxhashjs "^0.2.2"
-
-"@polkadot/util@3.4.1":
-  version "3.4.1"
-  resolved "https://registry.yarnpkg.com/@polkadot/util/-/util-3.4.1.tgz#8676dd49e9c2d2332dcb72239287e37f0ab2c60a"
-  integrity sha512-CJo0wAzXR8vjAzs9mHDooZr5a3XRW8LlYWik8d/+bv1VDwCC/metSiBrYBOapFhYUjlS5IYIw5bhWS5dnpkXvQ==
-  dependencies:
-    "@babel/runtime" "^7.11.2"
-    "@types/bn.js" "^4.11.6"
-    bn.js "^5.1.3"
-    camelcase "^5.3.1"
-    chalk "^4.1.0"
-    ip-regex "^4.1.0"
 
 "@polkadot/util@3.5.1", "@polkadot/util@^3.5.1":
   version "3.5.1"
