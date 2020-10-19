@@ -1,7 +1,7 @@
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { Keyring } from '@polkadot/keyring';
 import { KeyringPair$Json, KeyringPair } from '@polkadot/keyring/types';
-import { Balance, StakingLedger } from '@polkadot/types/interfaces'
+import { Balance, StakingLedger, AccountInfo } from '@polkadot/types/interfaces'
 import { createType, GenericImmortalEra } from '@polkadot/types';
 import { Logger, createLogger } from '@w3f/logger';
 import fs from 'fs-extra';
@@ -174,7 +174,7 @@ export class Client implements ApiClient {
         }
     }
 
-    private async getAccount(addr: string): Promise<any> {
+    private async getAccount(addr: string): Promise<AccountInfo> {
         return this._api.query.system.account(addr);
     }
 

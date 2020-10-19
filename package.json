@@ -1,6 +1,6 @@
 {
   "name": "@w3f/polkadot-api-client",
-  "version": "0.7.2",
+  "version": "0.7.3",
   "description": "Polkaddot API client",
   "repository": "git@github.com:w3f/polkadot-api-client-ts.git",
   "author": "W3F Infrastructure Team <devops@web3.foundation>",
@@ -19,15 +19,14 @@
     "start": "node ./dist/src/index.js start"
   },
   "dependencies": {
-    "@polkadot/api": "2.1.1",
-    "@polkadot/keyring": "3.5.1",
-    "@polkadot/types": "2.1.1",
-    "@polkadot/util": "3.5.1",
-    "@polkadot/util-crypto": "3.5.1",
-    "@w3f/logger": "^0.4.0",
+    "@polkadot/api": "^2.3.1",
+    "@polkadot/keyring": "^3.6.1",
+    "@polkadot/types": "^2.3.1",
+    "@polkadot/util": "^3.6.1",
+    "@polkadot/util-crypto": "^3.6.1",
+    "@w3f/logger": "^0.4.2",
     "async-wait-until": "^1.2.4",
-    "fs-extra": "^9.0.0",
-    "ws": "6.1.2"
+    "fs-extra": "^9.0.0"
   },
   "devDependencies": {
     "@types/chai": "^4.2.9",
