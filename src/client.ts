@@ -1,20 +1,20 @@
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { Keyring } from '@polkadot/keyring';
 import { KeyringPair$Json, KeyringPair } from '@polkadot/keyring/types';
-import { Balance, StakingLedger, AccountInfo } from '@polkadot/types/interfaces'
+import { Balance, AccountInfo } from '@polkadot/types/interfaces'
 import { createType, GenericImmortalEra } from '@polkadot/types';
 import { Logger, createLogger } from '@w3f/logger';
 import fs from 'fs-extra';
 import waitUntil from 'async-wait-until';
 
 import { Keystore, ApiClient } from './types';
-import { ZeroBalance, ZeroBN } from './constants';
+import { ZeroBalance } from './constants';
 
 
 export class Client implements ApiClient {
-    private _api: ApiPromise;
-    private currentTxDone: boolean;
-    private logger: Logger;
+    protected _api: ApiPromise;
+    protected currentTxDone: boolean;
+    protected logger: Logger;
 
     constructor(private readonly wsEndpoint: string, logger?: Logger) {
         if (!logger) {
@@ -93,69 +93,7 @@ export class Client implements ApiClient {
         }
     }
 
-    public async claim(validatorKeystore: Keystore, controllerAddress: string): Promise<void> {
-        if (this.apiNotReady()) {
-            await this.connect();
-        }
-
-        const maxBatchedTransactions = 9;
-        const keyPair = this.getKeyPair(validatorKeystore);
-
-        const currentEra = (await this._api.query.staking.activeEra()).unwrapOr(null);
-        if (!currentEra) {
-            throw new Error('Could not get current era');
-        }
-        const ledgerPr = await this._api.query.staking.ledger(controllerAddress);
-        const ledger: StakingLedger = ledgerPr.unwrapOr(null);
-
-        if (!ledger) {
-            throw new Error(`Could not get ledger for ${keyPair.address}`);
-        }
-        let lastReward: number;
-        if (ledger.claimedRewards.length == 0) {
-            lastReward = (await this._api.query.staking.historyDepth()).toNumber();
-        } else {
-            lastReward = ledger.claimedRewards.pop().toNumber();
-        }
-
-        let numOfUnclaimPayouts = currentEra.index - lastReward - 1;
-        let start = 1;
-        while (numOfUnclaimPayouts > 0) {
-            const payoutCalls = [];
-            let txLimit = numOfUnclaimPayouts;
-            if (numOfUnclaimPayouts > maxBatchedTransactions) {
-                txLimit = maxBatchedTransactions;
-            }
-
-            for (let i = start; i <= txLimit + start - 1; i++) {
-                const idx = lastReward + i;
-                const exposure = await this._api.query.staking.erasStakers(idx, keyPair.address);
-                this.logger.info(`exposure: ${exposure}`);
-                if (exposure.total.toBn().gt(ZeroBN)) {
-                    this.logger.info(`Adding claim for ${keyPair.address}, era ${idx}`);
-                    payoutCalls.push(this._api.tx.staking.payoutStakers(keyPair.address, idx));
-                }
-            }
-            this.currentTxDone = false;
-            try {
-                await this._api.tx.utility
-                    .batch(payoutCalls)
-                    .signAndSend(keyPair, this.sendStatusCb.bind(this));
-            } catch (e) {
-                this.logger.error(`Could not request claim for ${keyPair.address}: ${e}`);
-            }
-            try {
-                await waitUntil(() => this.currentTxDone, 48000, 500);
-            } catch (error) {
-                this.logger.info(`tx failed: ${error}`);
-            }
-            numOfUnclaimPayouts -= txLimit;
-            start += txLimit;
-        }
-        this.logger.info(`All payouts have been claimed for ${keyPair.address}.`);
-    }
-
-    private async connect(): Promise<void> {
+    protected async connect(): Promise<void> {
         const provider = new WsProvider(this.wsEndpoint);
         this._api = await ApiPromise.create({ provider });
 
@@ -178,7 +116,7 @@ export class Client implements ApiClient {
         return this._api.query.system.account(addr);
     }
 
-    private async sendStatusCb({ events = [], status }): Promise<void> {
+    protected async sendStatusCb({ events = [], status }): Promise<void> {
         if (status.isInvalid) {
             this.logger.info(`Transaction invalid`);
             this.currentTxDone = true;
@@ -206,11 +144,11 @@ export class Client implements ApiClient {
         return JSON.parse(fs.readFileSync(path, { encoding: 'utf-8' })) as KeyringPair$Json;
     }
 
-    private apiNotReady(): boolean {
+    protected apiNotReady(): boolean {
         return !this._api;
     }
 
-    private getKeyPair(keystore: Keystore): KeyringPair {
+    protected getKeyPair(keystore: Keystore): KeyringPair {
         const keyContents = this.keystoreContent(keystore.filePath);
         const keyType = keyContents.encoding.content[1];
         const keyring = new Keyring({ type: keyType });

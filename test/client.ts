@@ -62,19 +62,6 @@ describe('Client', () => {
         finalBobBalance.eq(expected).should.be.true;
     });
 
-    it('should try to retrieve claims', async () => {
-        const alice = keyring.addFromUri('//Alice');
-        const pass = 'pass';
-        const aliceKeypairJson = keyring.toJson(alice.address, pass);
-        const ksFile = tmp.fileSync();
-        fs.writeSync(ksFile.fd, JSON.stringify(aliceKeypairJson));
-        const passFile = tmp.fileSync();
-        fs.writeSync(passFile.fd, pass);
-        const ks: Keystore = { filePath: ksFile.name, passwordPath: passFile.name };
-
-        await subject.claim(ks, alice.address);
-    });
-
     it('should return the api object', async () => {
         const api = await subject.api();
 
