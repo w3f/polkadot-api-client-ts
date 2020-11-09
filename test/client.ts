@@ -16,6 +16,29 @@ const testRPC = new TestPolkadotRPC();
 let subject: Client;
 let keyring: Keyring;
 
+const testSend = async (isKeepAliveForced = false): Promise<void> =>{
+  const alice = keyring.addFromUri('//Alice');
+  const bob = keyring.addFromUri('//Bob');
+
+  const pass = 'pass';
+  const aliceKeypairJson = keyring.toJson(alice.address, pass);
+  const ksFile = tmp.fileSync();
+  fs.writeSync(ksFile.fd, JSON.stringify(aliceKeypairJson));
+  const passFile = tmp.fileSync();
+  fs.writeSync(passFile.fd, pass);
+  const ks: Keystore = { filePath: ksFile.name, passwordPath: passFile.name };
+
+  const initialBobBalance = await subject.balanceOf(bob.address);
+
+  const toSend = new BN(10000000000000);
+  await subject.send(ks, bob.address, toSend as Balance, isKeepAliveForced);
+
+  const finalBobBalance = await subject.balanceOf(bob.address);
+
+  const expected = (initialBobBalance as BN).add(toSend) as Balance;
+  finalBobBalance.eq(expected).should.be.true;
+}
+
 
 describe('Client', () => {
     before(async () => {
@@ -40,26 +63,11 @@ describe('Client', () => {
     });
 
     it('should make transfers', async () => {
-        const alice = keyring.addFromUri('//Alice');
-        const bob = keyring.addFromUri('//Bob');
+        await testSend();
+    });
 
-        const pass = 'pass';
-        const aliceKeypairJson = keyring.toJson(alice.address, pass);
-        const ksFile = tmp.fileSync();
-        fs.writeSync(ksFile.fd, JSON.stringify(aliceKeypairJson));
-        const passFile = tmp.fileSync();
-        fs.writeSync(passFile.fd, pass);
-        const ks: Keystore = { filePath: ksFile.name, passwordPath: passFile.name };
-
-        const initialBobBalance = await subject.balanceOf(bob.address);
-
-        const toSend = new BN(10000000000000);
-        await subject.send(ks, bob.address, toSend as Balance);
-
-        const finalBobBalance = await subject.balanceOf(bob.address);
-
-        const expected = (initialBobBalance as BN).add(toSend) as Balance;
-        finalBobBalance.eq(expected).should.be.true;
+    it('should make transfers KeepAlive', async () => {
+        await testSend(true)
     });
 
     it('should return the api object', async () => {

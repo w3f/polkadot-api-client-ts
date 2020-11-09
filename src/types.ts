@@ -9,7 +9,7 @@ export interface Keystore {
 export interface ApiClient {
     balanceOf(addr: string): Promise<Balance>;
     balanceOfKeystore(keystore: Keystore): Promise<Balance>;
-    send(keystore: Keystore, recipentAddress: string, amount: Balance): Promise<void>;
+    send(keystore: Keystore, recipentAddress: string, amount: Balance, isKeepAliveForced?: boolean): Promise<void>;
     disconnect(): void;
     api(): Promise<ApiPromise>;
 }
