@@ -49,7 +49,7 @@ export class Client implements ApiClient {
         return this.balanceOf(keyContents.address);
     }
 
-    public async send(keystore: Keystore, recipentAddress: string, amount: Balance): Promise<void> {
+    public async send(keystore: Keystore, recipentAddress: string, amount: Balance, isKeepAliveForced = false): Promise<void> {
         if (amount.lte(ZeroBalance)) {
             return
         }
@@ -67,7 +67,9 @@ export class Client implements ApiClient {
         const senderKeyPair = this.getKeyPair(keystore);
 
         const account = await this.getAccount(senderKeyPair.address);
-        const transfer = this._api.tx.balances.transfer(recipentAddress, amount);
+        let transfer;
+        if(isKeepAliveForced) transfer = this._api.tx.balances.transferKeepAlive(recipentAddress, amount);
+        else transfer = this._api.tx.balances.transfer(recipentAddress, amount);
         const transferOptions = {
             blockHash: this._api.genesisHash,
             era,
