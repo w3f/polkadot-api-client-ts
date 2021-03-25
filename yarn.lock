@@ -419,7 +419,7 @@
   dependencies:
     winston "^3.3.3"
 
-"@w3f/test-utils@^1.1.0":
+"@w3f/test-utils@^1.1.1":
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/@w3f/test-utils/-/test-utils-1.1.1.tgz#044fbf1123110bd4c318b12f5c9661eaf3405bf3"
   integrity sha512-TrnerZ7hBCf4GxE7s9Kl9CydVgdV2bg6KtVPGZm1OQdeniInGNkjDfU9FA21vdTkvBEzogklwg3GFCiezjXeFQ==
