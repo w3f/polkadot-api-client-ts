@@ -9,6 +9,7 @@ import waitUntil from 'async-wait-until';
 
 import { Keystore, ApiClient } from './types';
 import { ZeroBalance } from './constants';
+import { KeypairType } from '@polkadot/util-crypto/types';
 
 
 export class Client implements ApiClient {
@@ -152,12 +153,27 @@ export class Client implements ApiClient {
 
     protected getKeyPair(keystore: Keystore): KeyringPair {
         const keyContents = this.keystoreContent(keystore.filePath);
-        const keyType = keyContents.encoding.content[1];
+        const keyType = this.parseKeypairType(keyContents.encoding.content[1]);
         const keyring = new Keyring({ type: keyType });
         const senderKeyPair = keyring.addFromJson(keyContents);
         const passwordContents = fs.readFileSync(keystore.passwordPath, { encoding: 'utf-8' });
         senderKeyPair.decodePkcs8(passwordContents);
 
         return senderKeyPair;
+    }
+
+    private parseKeypairType(content: string): KeypairType {
+      switch (content.trim().toLowerCase()) {
+        case "ed25519":
+          return "ed25519"
+        case "sr25519":
+          return "sr25519"
+        case "ecdsa":
+          return "ecdsa"
+        case "ethereum":
+          return "ethereum" 
+        default:
+          return "sr25519" 
+      }
     }
 }
