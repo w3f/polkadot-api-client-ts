@@ -42,7 +42,7 @@ const testSend = async (isKeepAliveForced = false): Promise<void> =>{
 
 describe('Client', () => {
     before(async () => {
-        await testRPC.start();
+        await testRPC.start("v0.9.8");
         keyring = new Keyring({ type: 'sr25519' });
     });
 
