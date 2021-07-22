@@ -4,7 +4,7 @@ jobs:
   test:
     docker:
       - image: web3f/node:v0.1.3
-      - image: parity/polkadot:v0.8.30
+      - image: parity/polkadot:v0.9.8
         name: polkadot
         command: --chain=kusama-dev --ws-port 11000 --alice --ws-external --rpc-methods=Unsafe --rpc-cors=all
     steps:
