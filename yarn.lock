@@ -535,10 +535,10 @@ astral-regex@^2.0.0:
   resolved "https://registry.yarnpkg.com/astral-regex/-/astral-regex-2.0.0.tgz#483143c567aeed4785759c0865786dc77d7d2e31"
   integrity sha512-Z7tMw1ytTXt5jqMcOP+OQteU1VuNK9Y02uuJtKQ1Sv69jXQKKg5cibLwGJow8yzZP+eAc18EmLGPal0bp36rvQ==
 
-async-wait-until@^1.2.6:
-  version "1.2.6"
-  resolved "https://registry.yarnpkg.com/async-wait-until/-/async-wait-until-1.2.6.tgz#b6d8ada89913028af1928ee078925af75862b108"
-  integrity sha512-7I1zd0bnMEo7WfLfDoLZp+iPYKv/dl7kcW8wphazZn+BAElTGvtkDuQuonr480JzkS7f42VcGyP90mk3+3IfWA==
+async-wait-until@^2.0.9:
+  version "2.0.9"
+  resolved "https://registry.yarnpkg.com/async-wait-until/-/async-wait-until-2.0.9.tgz#012d095acd6851df289547ae62a49f992bb715b8"
+  integrity sha512-7OcRG5HH7+B0R77OlqavmlsEazLexaB1VnCmw4fAcVabCmwSF00DYRaa4tqHCFnZp0XbIJAEld1JSUuxg78kSw==
 
 async@^3.1.0:
   version "3.2.2"
