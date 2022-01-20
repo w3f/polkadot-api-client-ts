@@ -19,7 +19,7 @@
     "start": "node ./dist/src/index.js start"
   },
   "dependencies": {
-    "@polkadot/api": "^6.5.2",
+    "@polkadot/api": "^7.4.1",
     "@w3f/logger": "^0.4.2",
     "async-wait-until": "^1.2.6",
     "fs-extra": "^9.0.1"
