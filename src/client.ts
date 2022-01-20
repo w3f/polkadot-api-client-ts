@@ -1,12 +1,12 @@
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { Keyring } from '@polkadot/keyring';
 import { KeyringPair$Json, KeyringPair } from '@polkadot/keyring/types';
-import { Balance, AccountInfo } from '@polkadot/types/interfaces'
+import { Balance } from '@polkadot/types/interfaces'
+import { DeriveBalancesAccount } from '@polkadot/api-derive/types'
 import { createType, GenericImmortalEra } from '@polkadot/types';
 import { Logger, createLogger } from '@w3f/logger';
 import fs from 'fs-extra';
 import waitUntil from 'async-wait-until';
-
 import { Keystore, ApiClient } from './types';
 import { ZeroBalance } from './constants';
 import { KeypairType } from '@polkadot/util-crypto/types';
@@ -37,8 +37,8 @@ export class Client implements ApiClient {
             await this.connect();
         }
 
-        const account = await this.getAccount(addr);
-        return account.data.free;
+        const account = await this.getAccountBalances(addr);
+        return account.freeBalance
     }
 
     public async balanceOfKeystore(keystore: Keystore): Promise<Balance> {
@@ -67,14 +67,14 @@ export class Client implements ApiClient {
 
         const senderKeyPair = this.getKeyPair(keystore);
 
-        const account = await this.getAccount(senderKeyPair.address);
+        const account = await this.getAccountBalances(senderKeyPair.address);
         let transfer;
         if(isKeepAliveForced) transfer = this._api.tx.balances.transferKeepAlive(recipentAddress, amount);
         else transfer = this._api.tx.balances.transfer(recipentAddress, amount);
         const transferOptions = {
             blockHash: this._api.genesisHash,
             era,
-            nonce: account.nonce
+            nonce: account.accountNonce
         };
         this.logger.info(`sending ${amount} from ${senderKeyPair.address} to ${recipentAddress}`);
         this.currentTxDone = false;
@@ -115,8 +115,8 @@ export class Client implements ApiClient {
         }
     }
 
-    private async getAccount(addr: string): Promise<AccountInfo> {
-        return this._api.query.system.account(addr);
+    private async getAccountBalances(addr: string): Promise<DeriveBalancesAccount> {
+        return this._api.derive.balances.account(addr)
     }
 
     protected async sendStatusCb({ events = [], status }): Promise<void> {
