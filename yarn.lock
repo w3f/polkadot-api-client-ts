@@ -540,9 +540,9 @@
     winston "^3.3.3"
 
 "@w3f/test-utils@^1.2.14":
-  version "1.2.15"
-  resolved "https://registry.yarnpkg.com/@w3f/test-utils/-/test-utils-1.2.15.tgz#7497a8eee72e574ad410a7bc2ba154e9d74f427a"
-  integrity sha512-1aEpEayeWqwvO4Cppr+njn95lGj8B6Q2Nq3AJpW3vwlGwpem9mc45lONth8rHvnheFASkfdaSDi7HflIjZQBLg==
+  version "1.2.16"
+  resolved "https://registry.yarnpkg.com/@w3f/test-utils/-/test-utils-1.2.16.tgz#09981a94fbd2ff8dd3d619442481aa44b4f0d6a9"
+  integrity sha512-IgQo2HChQ9fEAXAG1YpCCcMZJAt7oitpZHz8sGlZpk4TCGn40xHNTsVEvzFBJAv3t0K3nCfvGofipuwolr3H8w==
   dependencies:
     "@polkadot/api" "^7.4.1"
     "@w3f/logger" "^0.4.2"
