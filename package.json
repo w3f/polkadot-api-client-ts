@@ -1,6 +1,6 @@
 {
   "name": "@w3f/polkadot-api-client",
-  "version": "1.2.19",
+  "version": "1.2.20",
   "description": "Polkaddot API client",
   "repository": "git@github.com:w3f/polkadot-api-client-ts.git",
   "author": "W3F Infrastructure Team <devops@web3.foundation>",
@@ -19,7 +19,7 @@
     "start": "node ./dist/src/index.js start"
   },
   "dependencies": {
-    "@polkadot/api": "^8.2.1",
+    "@polkadot/api": "^8.3.2",
     "@w3f/logger": "^0.4.2",
     "async-wait-until": "^1.2.6",
     "fs-extra": "^9.0.1"
