@@ -27,14 +27,14 @@
   "devDependencies": {
     "@types/chai": "^4.2.9",
     "@types/fs-extra": "^8.1.0",
-    "@types/mocha": "^9.0.0",
+    "@types/mocha": "^10.0.1",
     "@types/tmp": "^0.2.2",
     "@typescript-eslint/eslint-plugin": "^2.25.0",
     "@typescript-eslint/parser": "^2.25.0",
     "@w3f/test-utils": "^1.2.30",
     "chai": "^4.2.0",
     "eslint": "^7.32.0",
-    "mocha": "^9.1.2",
+    "mocha": "^10.1.0",
     "tmp": "^0.2.1",
     "ts-node": "^10.8.1",
     "typescript": "^4.2.3"
