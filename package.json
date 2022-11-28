@@ -22,7 +22,7 @@
     "@polkadot/api": "^9.4.2",
     "@w3f/logger": "^0.4.2",
     "async-wait-until": "^1.2.6",
-    "fs-extra": "^9.0.1"
+    "fs-extra": "^11.0.0"
   },
   "devDependencies": {
     "@types/chai": "^4.2.9",
