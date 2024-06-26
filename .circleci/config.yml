@@ -3,8 +3,8 @@ version: 2
 jobs:
   test:
     docker:
-      - image: web3f/node:v1
-      - image: parity/polkadot:v1.10.0
+      - image: web3f/node-dind:v3
+      - image: parity/polkadot:latest
         name: polkadot
         command: --dev --rpc-port 11000 --rpc-external
     steps:
