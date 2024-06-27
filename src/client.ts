@@ -70,7 +70,7 @@ export class Client implements ApiClient {
         const account = await this.getAccountBalances(senderKeyPair.address);
         let transfer;
         if(isKeepAliveForced) transfer = this._api.tx.balances.transferKeepAlive(recipentAddress, amount);
-        else transfer = this._api.tx.balances.transfer(recipentAddress, amount);
+        else transfer = this._api.tx.balances.transferAllowDeath(recipentAddress, amount);
         const transferOptions = {
             blockHash: this._api.genesisHash,
             era,
